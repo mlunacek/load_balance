@@ -1,14 +1,15 @@
 Load Balancing Serial Jobs
 
-It is often desirable to use an HPC system to run several serial jobs (e.g.
-parameter scans). The load_balance tool allows you to specify your jobs in a
-text file that is then read and executed across the resource you request. This
-works on multiple nodes. You can generate the text file using any scripting
-language you like. There are two load balancing schedules: static, where all
-the jobs are divided as evenly as possible among the processors available, and
-dynamic, where the jobs are scheduled by a master on an as needed basis. The
-dynamic schedule is best used when there is a large variance in job run times.
-
+It is often desirable to use an HPC system to run several serial jobs
+(e.g.  parameter scans). The load_balance tool allows you to specify
+your jobs in a text file that is then read and executed across the
+resource you request. This works on multiple nodes. You can generate
+the text file using any scripting language you like. There are two
+load balancing schedules: static (default), where all the jobs are
+divided as evenly as possible among the processors available, and
+dynamic, where the jobs are scheduled by a master on an as needed
+basis. The dynamic schedule is best used when there is a large
+variance in job run times.
 
 
 Install
@@ -39,7 +40,7 @@ load_balance --help
 Simple Example The following bash loop with create a file called cmd_lines that
 calls the echo command 100 times.
 
-for i in {1..100}; do echo "simulator $i" >> cmd_lines; done
+for i in {1..100}; do echo "echo simulator $i" >> cmd_lines; done
 
 The file should look like the following.
 
@@ -56,11 +57,13 @@ You can create an interactive session by typing the following:
 
 qsub -I -q janus-debug -l nodes=2:ppn=12
 
-Once the session starts, navigate to the directory containing the cmd_lines
-file. Then load the dotkit and run the load_balance tool. The -f argument
-specifies the name of the file containing the command lines. The load_balance
-tool will distribute the 100 jobs across 24 processors in a one-at-a-time,
-load-balanced way. It will use all the resources you request.
+Once the session starts, navigate to the directory containing the
+cmd_lines file. Then load the dotkit and run the load_balance
+tool. The -f argument specifies the name of the file containing the
+command lines. The load_balance tool will distribute the 100 jobs
+across 24 processors in a one-at-a-time, load-balanced way. It will
+use all the resources you request.  To use a dynamic schedule, set `-s
+dynamic`.
 
 use LoadBalance
 mpirun load_balance -f cmd_lines
@@ -82,4 +85,14 @@ cd $PBS_O_WORKDIR
 reuse LoadBalance
 
 mpirun load_balance -f cmd_lines
+
+Notes
+-------------------------------------------------------------------------------
+
+load_balance has been tested on the carver machine at NERSC with the following dependencies:
+
+- cmake/2.8.2
+- openmpi-gnu/1.4.5
+- boost/1.51
+
 
